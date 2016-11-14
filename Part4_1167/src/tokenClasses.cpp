@@ -50,9 +50,17 @@ char *demangle(const char *typeName) {
 // functions for parsing are below
 Token* postfix_exp()
 {
-	auto subTreeP = tokenObjectPs[tracker]->process_primary_exp();
-	// ***** Complete this function
-	return subTreeP;
+	int old_tracker = tracker;
+
+	Token* tObjP;
+
+	if(auto subTreeP = tokenObjectPs[tracker]->process_primary_exp())
+	{
+		tObjP = tokenObjectPs[tracker]->is_postfix_operator();
+		subTreeP->add_childP(tObjP);
+		return subTreeP;
+	}
+
 }
 
 Token* unary_exp()
@@ -68,8 +76,19 @@ Token* unary_exp()
 	}
 	return tObjP;
 }
-
 // ***** Add more functions around here somewhere *****
+Token* primary_exp()
+{
+
+}
+Token* div_exp()
+{
+
+}
+Token* additive_exp()
+{
+
+}
 
 Token* shift_exp()
 {
