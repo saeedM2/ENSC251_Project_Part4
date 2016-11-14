@@ -73,6 +73,7 @@ public:
 	virtual Token* process_primary_exp() { return nullptr; }
 	virtual Token* advance_past_shift_operator() { return nullptr; }
 	// ***** you may need to add stuff here *****
+	virtual Token* process_postfix(){ return nullptr;}
 	virtual Token* advance_past_assignment_operator() { return nullptr; }
 
 	virtual bool is_postfix_operator() { return false; }
@@ -278,6 +279,10 @@ public:
 	postfix_operator(const std::string &opValue): StringBasedToken(opValue){ };
 	bool is_postfix_operator() { return true; }
 	// ***** Complete this class if needed
+	Token* process_postfix()
+	{
+		return process_token();
+	}
 
 };
 

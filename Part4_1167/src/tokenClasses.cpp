@@ -50,17 +50,17 @@ char *demangle(const char *typeName) {
 // functions for parsing are below
 Token* postfix_exp()
 {
-	int old_tracker = tracker;
-
 	Token* tObjP;
-
-	if(auto subTreeP = tokenObjectPs[tracker]->process_primary_exp())
+	Token* subTreeP;
+	if((subTreeP=tokenObjectPs[tracker]->process_primary_exp()))
 	{
-		tObjP = tokenObjectPs[tracker]->is_postfix_operator();
-		subTreeP->add_childP(tObjP);
-		return subTreeP;
+		if(tokenObjectPs[tracker]->is_postfix_operator())
+		{
+			tObjP = tokenObjectPs[tracker]->process_postfix();
+			subTreeP->add_childP(tObjP);
+		}
 	}
-
+	return subTreeP;
 }
 
 Token* unary_exp()
@@ -77,10 +77,10 @@ Token* unary_exp()
 	return tObjP;
 }
 // ***** Add more functions around here somewhere *****
-Token* primary_exp()
+/*Token* primary_exp()
 {
 
-}
+}*/
 Token* div_exp()
 {
 
@@ -111,12 +111,34 @@ Token* shift_exp()
 Token* ternary_exp()
 {
 	int old_tracker = tracker;
-	Token* subTreeP;
+	Token* subTreeP=nullptr;
+	Token* RightNodeP=nullptr;
+	Token* LeftNodeP=nullptr;
+	Token* MiddleNode=nullptr;
 
+	if((LeftNodeP=tokenObjectPs[tracker]->process_primary_exp()))
+	{
+		if(tokenObjectPs[tracker]->has_string_value("?"))
+		{
+			subTreeP->add_childP(tokenObjectPs[tracker]);
+			if((RightNodeP=assignment_exp()))
+			{
+				if((MiddleNode=ternary_exp()))
+				{
+					subTreeP->add_childP(LeftNodeP);
+					subTreeP->add_childP(MiddleNode);
+					subTreeP->add_childP(RightNodeP);
+				}
+			}
+
+		}
+	}
 	// ***** Complete this function
-
-	tracker = old_tracker;
-	subTreeP = shift_exp();
+	else
+	{
+		tracker = old_tracker;
+		subTreeP = shift_exp();
+	}
 	if(subTreeP)
 		return subTreeP;
 	else
